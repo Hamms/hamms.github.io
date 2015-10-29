@@ -9,7 +9,7 @@ $(function(){
         ctx.fillStyle = color;
         ctx.fillRect(x*10,y*10,10,10);
         ctx.strokeRect(x*10,y*10,10,10);
-    }
+    };
 
     var board, width, height;
 
@@ -47,7 +47,7 @@ $(function(){
         return Math.abs(endx-x) + Math.abs(endy-y)
     }
 
-    var solveBoard = function(){
+    var solveBoard = function(callback){
         var closedset = {};
         var openset = [[startx,starty]];
         var path = {};
@@ -59,12 +59,14 @@ $(function(){
         f_score[startx] = {}
         f_score[startx][starty] = heur(startx, starty)
 
-        console.log(g_score, f_score)
-
         var current = [startx,starty]
         var indexOfCurrent = 0
 
-        while(openset.length > 0) {
+        var interval = setInterval(function(){
+            if (openset.length == 0) {
+            clearInterval(interval);
+            callback(false);
+            } else {
             current = openset[0];
             indexOfCurrent = 0;
             // current = the node in openset having the lowest f_score
@@ -78,7 +80,8 @@ $(function(){
 
             if (current[0] == endx && current[1] == endy) {
                 //woooo, we're done!
-                return path;
+                callback(path);
+                clearInterval(interval);
             }
 
             if (current[0] != startx || current[1] != starty)
@@ -95,7 +98,7 @@ $(function(){
                     if (
                         (x == current[0] || y == current[1]) && // only orthogonal movement
                         !(x == current[0] && y == current[1]) && // ignore case when node == current
-                        !(x in closedset && y in closedset[x]) &&  // if node is not in closed set
+                        !(x in closedset && y in closedset[x]) &&    // if node is not in closed set
                         (x >= 0 && x < width) && (y >= 0 && y < height) && // if node is within bounds
                         board[x][y] == true // if node is not an obstacle
                         ) {
@@ -116,29 +119,39 @@ $(function(){
                     }
                 }
             }
-        }
-
-        return false;
+            }
+        }, 5);
     }
 
     var draw = function(path){
         var x = endx, y = endy;
         var step = path[endx][endy]
-        while(step[0] != startx || step[1] != starty){
+        var interval = setInterval(function () {
+            if(step[0] != startx || step[1] != starty){
             drawxy(step[0],step[1],"green")
             step = path[step[0]][step[1]]
-        }
+            } else {
+            clearInterval(interval);
+            }
+        }, 10);
     }
 
     $('#redraw').click(function(){
         buildBoard();
-        var path = solveBoard()
+        solveBoard(function(path){
+            if (path === false) {
+                alert("no solution")
+            } else {
+                draw(path);
+            }
+        });
+    });
+    buildBoard();
+    solveBoard(function(path){
         if (path === false) {
             alert("no solution")
         } else {
             draw(path);
         }
     });
-    buildBoard();
-    draw(solveBoard());
 });
