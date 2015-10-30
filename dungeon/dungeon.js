@@ -1,27 +1,39 @@
 var DIRECTIONS = {
-  UP : {x: 0, y: -1},
-  DOWN : {x: 0, y: 1},
-  LEFT : {x: -1, y: 0},
-  RIGHT : {x: 1, y: 0},
+  UP: {
+    x: 0,
+    y: -1
+  },
+  DOWN: {
+    x: 0,
+    y: 1
+  },
+  LEFT: {
+    x: -1,
+    y: 0
+  },
+  RIGHT: {
+    x: 1,
+    y: 0
+  },
 };
 
 var utils = {
   randomChoice: function (array) {
-    return array[Math.floor(Math.random()*array.length)];
+    return array[Math.floor(Math.random() * array.length)];
   },
   randomInt: function (min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
   },
   RGB2HTML: function (red, green, blue) {
-    var decColor =0x1000000+ blue + 0x100 * green + 0x10000 *red ;
-    return '#'+decColor.toString(16).substr(1);
+    var decColor = 0x1000000 + blue + 0x100 * green + 0x10000 * red;
+    return '#' + decColor.toString(16).substr(1);
   },
   valueInRange: function (value, min, max) {
     return (value >= min) && (value <= max);
   },
 };
 
-var Stage = function(width, height) {
+var Stage = function (width, height) {
   this.width = width;
   this.height = height;
 
@@ -51,14 +63,14 @@ Stage.prototype.draw = function (canvas) {
   var tilewidth = (canvas.width / this.width);
   var tileheight = (canvas.height / this.height);
   var ctx = canvas.getContext("2d");
-  this.forEachTile(function(tile, pos) {
+  this.forEachTile(function (tile, pos) {
     var color = this.colors[tile];
     if (color === undefined) {
       color = utils.RGB2HTML(utils.randomInt(50, 200), utils.randomInt(50, 200), utils.randomInt(50, 200));
       this.colors[tile] = color;
     }
     ctx.fillStyle = color;
-    ctx.fillRect(pos.x*tilewidth, pos.y*tileheight, tilewidth, tileheight);
+    ctx.fillRect(pos.x * tilewidth, pos.y * tileheight, tilewidth, tileheight);
   }, this);
 };
 
@@ -66,16 +78,22 @@ Stage.prototype.contains = function (pos) {
   return (pos.x >= 0 && pos.x < this.width && pos.y >= 0 && pos.y < this.height);
 };
 
-Stage.prototype.forEachTile = function(cb, context) {
+Stage.prototype.forEachTile = function (cb, context) {
   context = context || this;
   for (var x = 0; x < this.width; x++) {
     for (var y = 0; y < this.height; y++) {
-      cb.call(context, this.getTile({x:x, y:y}), {x: x, y: y});
+      cb.call(context, this.getTile({
+        x: x,
+        y: y
+      }), {
+        x: x,
+        y: y
+      });
     }
   }
 };
 
-var Room = function(x, y, width, height) {
+var Room = function (x, y, width, height) {
   this.x = x;
   this.y = y;
   this.width = width;
@@ -97,7 +115,10 @@ Room.prototype.positions = function () {
   var positions = [];
   for (var i = this.x; i < (this.x + this.width); i++) {
     for (var j = this.y; j < (this.y + this.height); j++) {
-      positions.push({x: i, y: j});
+      positions.push({
+        x: i,
+        y: j
+      });
     }
   }
   return positions;
@@ -132,7 +153,7 @@ Dungeon.prototype.growMaze = function (start) {
 
   this.startRegion();
   this.carve(start);
-  
+
   cells.push(start);
 
   while (cells.length > 0) {
@@ -144,7 +165,7 @@ Dungeon.prototype.growMaze = function (start) {
       var should_continue_straight = unmadeCells.indexOf(lastDir) > -1 &&
           Math.random() > this.windingPercent;
       var dir = should_continue_straight ? lastDir : utils.randomChoice(unmadeCells);
-      
+
       this.carve(this.moveInDirection(cell, dir, 1));
       this.carve(this.moveInDirection(cell, dir, 2));
 
@@ -201,7 +222,7 @@ Dungeon.prototype.connectRegions = function () {
   this.stage.forEachTile(function (tile, pos) {
     if (tile === 0) {
       var regions = {};
-      Object.keys(DIRECTIONS).forEach(function(dir){
+      Object.keys(DIRECTIONS).forEach(function (dir) {
         var newpos = this.moveInDirection(pos, dir);
         var region = this.regions[newpos.x + ',' + newpos.y];
         if (region !== undefined) {
@@ -217,8 +238,11 @@ Dungeon.prototype.connectRegions = function () {
     }
   }, this);
 
-  var connectors = Object.keys(connectorRegions).map(function(string){
-    return {x: string.split(',')[0], y: string.split(',')[1]};
+  var connectors = Object.keys(connectorRegions).map(function (string) {
+    return {
+      x: string.split(',')[0],
+      y: string.split(',')[1]
+    };
   });
 
   var merged = {};
@@ -242,15 +266,15 @@ Dungeon.prototype.connectRegions = function () {
       }
     }
 
-    regions.forEach(function(region){
+    regions.forEach(function (region) {
       delete openRegions[region];
     });
 
-    connectors = connectors.filter(function(pos){
-      if (Math.abs(pos.x-connector.x) < 2 && Math.abs(pos.y-connector.y) < 2) return false;
+    connectors = connectors.filter(function (pos) {
+      if (Math.abs(pos.x - connector.x) < 2 && Math.abs(pos.y - connector.y) < 2) return false;
 
       var regions = {};
-      connectorRegions[pos.x + ',' + pos.y].forEach(function(region){
+      connectorRegions[pos.x + ',' + pos.y].forEach(function (region) {
         regions[merged[region]] = true;
       });
 
@@ -278,7 +302,7 @@ Dungeon.prototype.carve = function (pos) {
   this.regions[pos.x + ',' + pos.y] = this.currentRegion;
 };
 
-Dungeon.prototype.moveInDirection = function(cell, dir, spaces) {
+Dungeon.prototype.moveInDirection = function (cell, dir, spaces) {
   if (typeof dir === 'string') {
     dir = DIRECTIONS[dir];
   }
@@ -289,7 +313,7 @@ Dungeon.prototype.moveInDirection = function(cell, dir, spaces) {
   };
 };
 
-Dungeon.prototype.carvableDirections = function(cell) {
+Dungeon.prototype.carvableDirections = function (cell) {
   return Object.keys(DIRECTIONS).filter(function (dir) {
     return this.canCarve(cell, DIRECTIONS[dir]);
   }, this);
@@ -301,7 +325,7 @@ Dungeon.prototype.removeDeadEnds = function () {
     done = true;
     this.stage.forEachTile(function (tile, pos) {
       if (tile !== 0) {
-        var exits = Object.keys(DIRECTIONS).filter(function(dir){
+        var exits = Object.keys(DIRECTIONS).filter(function (dir) {
           var newtile = this.moveInDirection(pos, dir);
           return this.stage.contains(newtile) && this.stage.getTile(newtile) !== 0;
         }, this);
@@ -317,8 +341,8 @@ Dungeon.prototype.removeDeadEnds = function () {
 
 Dungeon.prototype.removeDeadEnds2 = function () {
 
-  var getExits = function(pos) {
-    return Object.keys(DIRECTIONS).filter(function(dir){
+  var getExits = function (pos) {
+    return Object.keys(DIRECTIONS).filter(function (dir) {
       var newtile = this.moveInDirection(pos, dir);
       return this.stage.contains(newtile) && this.stage.getTile(newtile) !== 0;
     }, this);
@@ -331,7 +355,7 @@ Dungeon.prototype.removeDeadEnds2 = function () {
     }
   }, this);
 
-  deadends.forEach(function(pos) {
+  deadends.forEach(function (pos) {
     var exits = getExits.call(this, pos);
     var newpos = pos;
     while (exits.length == 1) {
@@ -357,7 +381,10 @@ Dungeon.prototype.generate = function (options) {
   this.addRooms();
   for (var y = 1; y < this.stage.height; y += 2) {
     for (var x = 1; x < this.stage.width; x += 2) {
-      var pos = {x:x, y:y};
+      var pos = {
+        x: x,
+        y: y
+      };
       if (this.stage.getTile(pos) !== 0) continue;
       this.growMaze(pos);
     }
@@ -367,7 +394,7 @@ Dungeon.prototype.generate = function (options) {
   this.removeDeadEnds();
 };
 
-document.addEventListener("DOMContentLoaded", function(event) { 
+document.addEventListener("DOMContentLoaded", function (event) {
   var options = {
     numRoomTries: 10000,
     extraConnectorChance: 0.2,
