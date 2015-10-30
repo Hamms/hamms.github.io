@@ -47,31 +47,53 @@ var Stage = function (width, height) {
   }
 };
 
-Stage.prototype.getTile = function (pos) {
-  x = pos.x % this.width;
-  y = pos.y % this.height;
+Stage.prototype.getTile = function (x, y) {
+  if (arguments.length == 1) {
+    var pos = x;
+    x = pos.x;
+    y = pos.y;
+  }
+  x = x % this.width;
+  y = y % this.height;
   return this.tiles[y * this.width + x];
 };
 
-Stage.prototype.carveTile = function (pos, color) {
-  x = pos.x % this.width;
-  y = pos.y % this.height;
+Stage.prototype.carveTile = function (x, y, color) {
+  if (arguments.length == 2) {
+    var pos = x;
+    color = y;
+    x = pos.x;
+    y = pos.y;
+  }
+  x = x % this.width;
+  y = y % this.height;
   this.tiles[y * this.width + x] = color;
 };
 
-Stage.prototype.draw = function (canvas) {
+Stage.prototype.getOrCreateColor = function (tile) {
+  var color = this.colors[tile];
+  if (color === undefined) {
+    color = utils.RGB2HTML(utils.randomInt(50, 200), utils.randomInt(50, 200), utils.randomInt(50, 200));
+    this.colors[tile] = color;
+  }
+  return color;
+};
+
+Stage.prototype.drawRegion = function (canvas, x, y, width, height) {
   var tilewidth = (canvas.width / this.width);
   var tileheight = (canvas.height / this.height);
   var ctx = canvas.getContext("2d");
-  this.getTiles().forEach(function (tile) {
-    var color = this.colors[tile.tile];
-    if (color === undefined) {
-      color = utils.RGB2HTML(utils.randomInt(50, 200), utils.randomInt(50, 200), utils.randomInt(50, 200));
-      this.colors[tile.tile] = color;
+  for (var i = x; i < (x + width); i++) {
+    for (var j = y; j < (y + height); j++) {
+      var tile = this.getTile(i, j);
+      ctx.fillStyle = this.getOrCreateColor(tile);
+      ctx.fillRect(i * tilewidth, j * tileheight, tilewidth, tileheight);
     }
-    ctx.fillStyle = color;
-    ctx.fillRect(tile.x * tilewidth, tile.y * tileheight, tilewidth, tileheight);
-  }, this);
+  }
+};
+
+Stage.prototype.draw = function (canvas) {
+  this.drawRegion(canvas, 0, 0, this.width, this.height);
 };
 
 Stage.prototype.contains = function (pos) {
@@ -212,6 +234,8 @@ Dungeon.prototype.roomOverlapAnyExisting = function (room) {
   });
 };
 
+// TODO this method is just super hacky, and should definitely be
+// rewritten. Like, from scratch. Burn it down and start over.
 Dungeon.prototype.connectRegions = function () {
   var connectorRegions = {};
   this.stage.getTiles().forEach(function (tile) {
