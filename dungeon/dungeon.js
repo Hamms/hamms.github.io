@@ -63,14 +63,14 @@ Stage.prototype.draw = function (canvas) {
   var tilewidth = (canvas.width / this.width);
   var tileheight = (canvas.height / this.height);
   var ctx = canvas.getContext("2d");
-  this.forEachTile(function (tile, pos) {
-    var color = this.colors[tile];
+  this.getTiles().forEach(function (tile) {
+    var color = this.colors[tile.tile];
     if (color === undefined) {
       color = utils.RGB2HTML(utils.randomInt(50, 200), utils.randomInt(50, 200), utils.randomInt(50, 200));
-      this.colors[tile] = color;
+      this.colors[tile.tile] = color;
     }
     ctx.fillStyle = color;
-    ctx.fillRect(pos.x * tilewidth, pos.y * tileheight, tilewidth, tileheight);
+    ctx.fillRect(tile.x * tilewidth, tile.y * tileheight, tilewidth, tileheight);
   }, this);
 };
 
@@ -78,19 +78,14 @@ Stage.prototype.contains = function (pos) {
   return (pos.x >= 0 && pos.x < this.width && pos.y >= 0 && pos.y < this.height);
 };
 
-Stage.prototype.forEachTile = function (cb, context) {
-  context = context || this;
-  for (var x = 0; x < this.width; x++) {
-    for (var y = 0; y < this.height; y++) {
-      cb.call(context, this.getTile({
-        x: x,
-        y: y
-      }), {
-        x: x,
-        y: y
-      });
-    }
-  }
+Stage.prototype.getTiles = function () {
+  return this.tiles.map(function (tile, i) {
+    return {
+      tile: tile,
+      x: i % this.width,
+      y: Math.floor(i / this.width)
+    };
+  }, this);
 };
 
 var Room = function (x, y, width, height) {
@@ -103,10 +98,10 @@ var Room = function (x, y, width, height) {
 Room.prototype.overlaps = function (other) {
 
   var overlaps_x = utils.valueInRange(this.x, other.x, other.x + other.width) ||
-      utils.valueInRange(other.x, this.x, this.x + this.width);
+    utils.valueInRange(other.x, this.x, this.x + this.width);
 
   var overlaps_y = utils.valueInRange(this.y, other.y, other.y + other.height) ||
-      utils.valueInRange(other.y, this.y, this.y + this.height);
+    utils.valueInRange(other.y, this.y, this.y + this.height);
 
   return overlaps_x && overlaps_y;
 };
@@ -163,7 +158,7 @@ Dungeon.prototype.growMaze = function (start) {
 
     if (unmadeCells.length > 0) {
       var should_continue_straight = unmadeCells.indexOf(lastDir) > -1 &&
-          Math.random() > this.windingPercent;
+        Math.random() > this.windingPercent;
       var dir = should_continue_straight ? lastDir : utils.randomChoice(unmadeCells);
 
       this.carve(this.moveInDirection(cell, dir, 1));
@@ -219,12 +214,12 @@ Dungeon.prototype.roomOverlapAnyExisting = function (room) {
 
 Dungeon.prototype.connectRegions = function () {
   var connectorRegions = {};
-  this.stage.forEachTile(function (tile, pos) {
-    if (tile === 0) {
+  this.stage.getTiles().forEach(function (tile) {
+    if (tile.tile === 0) {
       var regions = {};
       Object.keys(DIRECTIONS).forEach(function (dir) {
-        var newpos = this.moveInDirection(pos, dir);
-        var region = this.regions[newpos.x + ',' + newpos.y];
+        var newtile = this.moveInDirection(tile, dir);
+        var region = this.regions[newtile.x + ',' + newtile.y];
         if (region !== undefined) {
           regions[region] = true;
         }
@@ -233,7 +228,7 @@ Dungeon.prototype.connectRegions = function () {
       regions = Object.keys(regions);
 
       if (regions.length >= 2) {
-        connectorRegions[pos.x + ',' + pos.y] = regions;
+        connectorRegions[tile.x + ',' + tile.y] = regions;
       }
     }
   }, this);
@@ -319,55 +314,36 @@ Dungeon.prototype.carvableDirections = function (cell) {
   }, this);
 };
 
-Dungeon.prototype.removeDeadEnds = function () {
-  var done = false;
-  while (!done) {
-    done = true;
-    this.stage.forEachTile(function (tile, pos) {
-      if (tile !== 0) {
-        var exits = Object.keys(DIRECTIONS).filter(function (dir) {
-          var newtile = this.moveInDirection(pos, dir);
-          return this.stage.contains(newtile) && this.stage.getTile(newtile) !== 0;
-        }, this);
+Dungeon.prototype.getExits = function (pos) {
+  return Object.keys(DIRECTIONS).filter(function (dir) {
+    var newtile = this.moveInDirection(pos, dir);
+    return this.stage.contains(newtile) && this.stage.getTile(newtile) !== 0;
+  }, this).map(function (dir) {
+    return this.moveInDirection(pos, dir);
+  }, this);
+};
 
-        if (exits.length === 1) {
-          done = false;
-          this.stage.carveTile(pos, 0);
-        }
-      }
-    }, this);
+Dungeon.prototype.isDeadEnd = function (pos) {
+  return this.getExits(pos).length === 1;
+};
+
+Dungeon.prototype.removeDeadEnds = function () {
+
+  var deadends = this.stage.getTiles().filter(function (tile) {
+    return tile.tile !== 0 && this.isDeadEnd(tile);
+  }, this);
+
+  while (deadends.length) {
+    var pos = deadends.pop();
+    this.stage.carveTile(pos, 0);
+    var newPos = this.getExits(pos)[0];
+    if (this.isDeadEnd(newPos)) {
+      deadends.push(newPos);
+    }
   }
 };
 
-Dungeon.prototype.removeDeadEnds2 = function () {
-
-  var getExits = function (pos) {
-    return Object.keys(DIRECTIONS).filter(function (dir) {
-      var newtile = this.moveInDirection(pos, dir);
-      return this.stage.contains(newtile) && this.stage.getTile(newtile) !== 0;
-    }, this);
-  };
-
-  var deadends = [];
-  this.stage.forEachTile(function (tile, pos) {
-    if (tile !== 0 && getExits.call(this, pos).length == 1) {
-      deadends.push(pos);
-    }
-  }, this);
-
-  deadends.forEach(function (pos) {
-    var exits = getExits.call(this, pos);
-    var newpos = pos;
-    while (exits.length == 1) {
-      this.stage.carveTile(newpos, 0);
-      newpos = exits[0];
-      exits = getExits.call(this, newpos);
-    }
-  }, this);
-};
-
 Dungeon.prototype.generate = function (options) {
-
   this.numRoomTries = options.numRoomTries || 10000;
   this.extraConnectorChance = options.extraConnectorChance || 0.2;
   this.roomExtraSize = options.roomExtraSize || 3;
@@ -395,9 +371,11 @@ Dungeon.prototype.generate = function (options) {
 };
 
 document.addEventListener("DOMContentLoaded", function (event) {
+  var dungeon = new Dungeon();
+
   var options = {
     numRoomTries: 10000,
-    extraConnectorChance: 0.2,
+    extraConnectorChance: 0.01,
     roomExtraSize: 3,
     windingPercent: 0.2,
   };
@@ -407,7 +385,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
   };
 
   var inputs = document.getElementsByTagName('input');
-  for (var i = 0, input; (input = inputs[i]); i++) {
+  for (var i = 0, input;
+    (input = inputs[i]); i++) {
     input.addEventListener('change', setOption);
   }
 
@@ -417,7 +396,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
     dungeon.stage.draw(canvas);
   });
 
-  window.dungeon = new Dungeon();
   dungeon.generate(options);
   dungeon.stage.draw(canvas);
 });
