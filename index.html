@@ -1,317 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Elijah Hamovitz - Professional Portfolio</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link href="/static/css/theme.css" rel="stylesheet">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-</head>
-
-<body>
-
-    <!-- Navigation -->
-    
-    
-    
-
-    <!-- Page Content -->
-    <div class="container">
-        
-    
-        <!-- Page Heading -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Elijah Hamovitz
-                    <small>Professional Portfolio</small>
-                    <div class="col-lg-3 pull-right text-right">
-                        <a href="tel:5418685980" class="entypo">&#128222;</a>
-                        <a href="mailto:elijah@hamovitz.com" class="entypo">&#9993;</a>
-                        <a href="http://github.com/Hamms" class="entypo-social">&#62208;</a>
-                        <a href="http://plus.google.com/103362681809905839517" class="entypo-social">&#62223;</a>
-                        <a class="btn btn-link btn-sm" href="/static/resume.pdf" class="">Résumé</a>
-                    </div>
-                </h1>
-            </div>
-        </div>
-        <!-- /.row -->
-        
-
-    <!-- Project One -->
-    
-
-    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="row col-lg-12">
-                <h3>Student Guide</h3>
-                <h4>University of Oregon</h4>
-            </div>
-            <div class="row col-lg-12">
-                
-
-                <p>A comprehensive directory of buildings, faculty, classes, and other resources targeted at students new to the University of Oregon. The website was built using one of the earliest stable versions of Node.js, and utilized Express.js, MongoDB, and Sencha Touch.</p>
-                <p>Our most interesting and challenging feature was an embedded interactive campus map. At the time, other services such as Google Maps had not fully indexed the various buildings and landmarks on campus and were still a long ways away from being able to provide walking directions. We created a fuzzy-searchable database of these locations that was able to provide walking directions along the University's sidewalks and lighted paths.</p>
-
-            </div>
-        </div>
+<!-- Inspired by http://www.jeffweisbein.com/ -->
+<html>
+  <head>
+    <title>Elijah Hamovitz</title>
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+    <style type="text/css"> 
+      body {
+        background-color: #000;
+      }
+      #console {
+        font-family: 'Droid Sans Mono', courier, monospace;
+        color: #fff;
+        max-width: 72em;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 5%;
+        font-size: 14px;
+        border: 1px solid rgb(42, 80, 105);
+        border-top-color: rgb(76, 120, 153);
+      }
+      #header {
+        background-color: rgb(42, 80, 105);
+        padding-left: 3px;
+      }
+      #content {
+        border: 1px solid rgb(42, 80, 105);
+        border-top-color: rgb(76, 120, 153);
+        padding: 4px;
+      }
+      a {
+        color: #0bc;
+        text-decoration: none;
+      }
+      p {
+        margin: 0 0 1em;
+      }
+      .green {
+        color: #0f0;
+      }
+      .blue {
+        color: #0bc;
+      }
+      .pink {
+        color: #ff0096;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="console">
+      <div id="header">uxterm</div>
+      <div id="content">
+        <p>[<span class="green">elijah@hamovitz</span>:<span class="pink">~</span>]<span class="blue">$</span> cat introduction.txt</p>
+        <p>Hi, I'm Elijah Hamovitz.</p>
+        <p>I'm a web developer by trade. I turn coffee into code.</p>
+        <p>I've worked at a number of great dev shops, including <a href="http://emumarketing.uoregon.edu/">EMU Marketing</a>, <a href="http://concentricsky.com/">Concentric Sky</a>, <a href="http://twentyideas.com/">Twenty Ideas</a>, and <a href="https://code.org/">code.org</a>.
+        <p>If you would like to get in touch with me, please feel free to shoot me an email at <a href="mailto:elijah@hamovitz.com">elijah@hamovitz.com</a>.</p>
+        <p>[<span class="green">elijah@hamovitz</span>:<span class="pink">~</span>]<span class="blue">$</span> &#x2588;</p>
+      </div>
     </div>
-    
-
-    
-    <hr>
-    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="row col-lg-12">
-                <h3>BCS Watch Party</h3>
-                <h4>University of Oregon</h4>
-            </div>
-            <div class="row col-lg-12">
-                
-
-                <p>When the Ducks played in the 2011 BCS National Championships game, the University of Oregon decided to host a watch party in Mac Court for all students. They came to us to create a website that would allow students to register for a limited number of tickets.</p>
-                <p>We had a little over two weeks to create a website that could handle the impressive amount of traffic UO students will generate for their Ducks, as well as to design and implement a stable ticketing system that we could use on game day.</p>
-                <p>We built the website in Node.js. It communicated asynchronously with a LaTeX process that generated custom printable tickets and emailed them in real-time to each student. We used QR codes and some simple barcode scanners to process the tickets on game day and check the students in using our custom backend.</p>
-                <p>The challenge of this project was learning Node.js - at the time, a relatively young platform - well enough to be able to create a robust, stable website all within an extremely short deadline.</p>
-
-                
-                
-                
-            </div>
-        </div>
-    </div>
-    
-
-    
-    <hr>
-    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="row col-lg-12">
-                <h3>Outdoor Program</h3>
-                <h4>University of Oregon</h4>
-            </div>
-            <div class="row col-lg-12">
-                
-                <div class="col-md-5 pull-right">
-                    <img class="img-responsive grayscale img-thumbnail" src="/static/images/op.uoregon.edu_med.png" alt="">
-                </div>
-                
-
-                <p>The Outdoor Program website was my first project as a solo developer. Myself and a designer interacted directly with the client to conceptualize and construct a brand-new website for the University of Oregon Outdoor Program.</p>
-<p>The web site was written in Node.js using the Express framework, and boasts a custom CMS, robust search functionality, and a pretty snappy image server with inferred resizing capability.</p>
-
-                
-                
-                <a class="btn btn-primary" href="http://op.uoregon.edu">Check It Out <span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
-        </div>
-    </div>
-    
-
-    
-    <hr>
-    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="row col-lg-12">
-                <h3>50 for 5k</h3>
-                <h4>University of Oregon</h4>
-            </div>
-            <div class="row col-lg-12">
-                
-
-                <p>And they have hardened your hearts should be blotted out, and also from that time forth —</p>
-<p>Then shalt thou be established, and yet suffer the law which had been called, and the suffering of our country.</p>
-
-                
-                
-                
-            </div>
-        </div>
-    </div>
-    
-
-    
-    <hr>
-    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="row col-lg-12">
-                <h3>Silicon Shire</h3>
-                <h4>Concentric Sky</h4>
-            </div>
-            <div class="row col-lg-12">
-                
-                <div class="col-md-5 pull-right">
-                    <img class="img-responsive grayscale img-thumbnail" src="/static/images/siliconshire_med.png" alt="">
-                </div>
-                
-
-                <p>A curated directory of local tech companies in the Eugene/Springfield area.</p>
-                <p>Silicon Shire was an internal project at Concentric Sky with the goal of increasing Eugene's reputation as a technological hub. It provides a convenient (and visually striking) map of all the tech companies in the area.</p>
-                
-                <a class="btn btn-default" href="https://concentricsky.com/">More Info</a>
-                <a class="btn btn-primary" href="https://siliconshire.org/">Check It Out <span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
-        </div>
-    </div>
-    
-
-    
-    <hr>
-    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="row col-lg-12">
-                <h3>Children In Between</h3>
-                <h4>Concentric Sky</h4>
-            </div>
-            <div class="row col-lg-12">
-                
-                <div class="col-md-5 pull-right">
-                    <img class="img-responsive grayscale img-thumbnail" src="/static/images/cib_med.png" alt="">
-                </div>
-                
-
-                <p>Designed to help divorcing couples learn how to help their children during this period of difficult transition, Children in Between is a guided course of videos, activities, and quizzes designed by Donald Gordon and implemented by us.</p>
-<p>Completion of our online course was often required by courts, which made stability and accessibility our top priority. The website, including all audio and video assets, is fully multilingual.</p>
-
-                
-                
-                <a class="btn btn-primary" href="http://online.divorce-education.com/">Check It Out <span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
-        </div>
-    </div>
-    
-
-    
-    <hr>
-    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="row col-lg-12">
-                <h3>ACT on College Life</h3>
-                <h4>Concentric Sky</h4>
-            </div>
-            <div class="row col-lg-12">
-                
-
-                <p>An ambitious suite of lessons, exercises, and videos designed to suppliment Steven Hayes' therapy programs.</p>
-<p>The site's users worked through a series of activities, many of them involving complex interactions. Their progress was tracked and reported to their assigned counselor, and they were encouraged to go back and revisit activities they found particularly helpful.</p>
-<p>By far the most significant challenge of this project was designing the Backbone.js-driven clientside application to allow for a varied array of activities while maintaining consistency for both the end user and future developers. Cross-browser compatibility</p>
-
-                
-                <a class="btn btn-default" href="http://concentricsky.com/work/act-college-life">More Info</span></a>
-                
-            </div>
-        </div>
-    </div>
-    
-
-    
-    <hr>
-    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="row col-lg-12">
-                <h3>Mama Seeds</h3>
-                <h4>Concentric Sky</h4>
-            </div>
-            <div class="row col-lg-12">
-                
-                <div class="col-md-5 pull-right">
-                    <img class="img-responsive grayscale img-thumbnail" src="/static/images/mamaseeds_med.png" alt="">
-                </div>
-                
-
-                <p>The show of their hearts were turned from the end, the land of their people, and hast feared continually every day they shall be murders, and to render to every man dealing justly, one against another;</p>
-<p>And now, do good continually, that ye will yield to no temptation, but are built, which should be his master, Laban, and remained so ever after; and also their destruction and wickedness.</p>
-
-                <a class="btn btn-default" href="http://concentricsky.com/work/mama-seeds">More Info</span></a>
-                <a class="btn btn-primary" href="http://mamaseeds.com/">Check It Out <span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
-        </div>
-    </div>
-    
-
-    
-    <hr>
-    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="row col-lg-12">
-                <h3>Hallspot</h3>
-                <h4>Hallspot</h4>
-            </div>
-            <div class="row col-lg-12">
-                
-                <div class="col-md-5 pull-right">
-                    <img class="img-responsive grayscale img-thumbnail" src="/static/images/hallspot_med.png" alt="">
-                </div>
-                
-
-                <p>In thy seed shall not smite again.</p>
-<p>Yea, behold, I am the light and the inhabitants thereof.</p>
-<p>And now as ye will not hold them, if he say that he spake with power and with that same judgment of God; and there was no law given — if they should carry with them; and they had been high priests of king Laman died, and that there should be altered in a profound silence.</p>
-
-                
-                
-                <a class="btn btn-primary" href="https://hallspot.com/">Check It Out <span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
-        </div>
-    </div>
-    
-
-
-        <!-- Pagination -->
-        
-        
-        
-        <!-- /.row -->
-
-        <!-- Footer -->
-        
-        <hr>
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>Copyright &copy; Elijah Hamovitz 2014</p>
-                </div>
-            </div>
-            <!-- /.row -->
-        </footer>
-        
-    </div>
-    <!-- /.container -->
-
-    
-    <!-- jQuery -->
-    <script src="/static/js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/static/js/bootstrap.min.js"></script>
-    
-
-</body>
-
+  </body>
 </html>
